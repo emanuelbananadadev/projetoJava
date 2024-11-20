@@ -1,0 +1,3 @@
+1;terror;Ativo
+2;drama;Ativo
+3;romance;Ativo
