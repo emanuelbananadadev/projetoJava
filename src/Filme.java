@@ -1,28 +1,31 @@
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.util.ArrayList;
 
-public class Filme {
+public class Filme extends Base<Filme> {
     private int idFilme;
     private String titulo;
     private int classificacao;
     private Genero genero;
     private String status;
 
-    public Filme(int id, String titulo, int classificacao, Genero genero) {
-        this.idFilme = id;
+    public Filme(int idFilme, String titulo, int classificacao, Genero genero) {
+        super("filme.txt");
+        this.idFilme = idFilme;
         this.titulo = titulo;
         this.classificacao = classificacao;
         this.genero = genero;
         this.status = "Ativo";
     }
 
-    public int GetId() {
-        return  this.idFilme;
+    public Filme() {
+        super("filme.txt");
     }
 
-    public void setId(int id) {
-        this.idFilme = id;
+    public int getIdFilme() {
+        return this.idFilme;
+    }
+
+    public void setIdFilme(int idFilme) {
+        this.idFilme = idFilme;
     }
 
     public String getTitulo() {
@@ -53,22 +56,46 @@ public class Filme {
         return this.status;
     }
 
-    public boolean cadastrar() {
-        try {
-            FileWriter fw = new FileWriter("./src/bd/filme.txt", true);
-            BufferedWriter bw = new BufferedWriter(fw);
-
-            String linha = this.idFilme + ";" + this.titulo + ";" + this.classificacao + ";" + genero.getDescricao() + ";" + this.status;
-            bw.write(linha);
-            bw.newLine();
-            bw.close();
-            return true;
-        } catch(IOException e) {
-            System.out.println("Não foi possível cadastrar: " + e.getMessage());
-            return false;
-        }
+    public boolean salvar() {
+        String linha = this.idFilme + ";" + this.titulo + ";" + this.classificacao + ";" + genero.getId() + ";" + this.status;
+        return cadastrar(linha);
     }
 
+    public ArrayList<String[]> listarFilmes() {
+        return listar();
+    }
 
-    
+    public boolean editarFilme(int idProcurado, String novoTitulo) {
+        return editar(idProcurado, novoTitulo);
+    }
+
+    public Filme consultarFilme(int idProcurado, String tituloProcurado) {
+       Filme filmeEncontrado = consultar(idProcurado, tituloProcurado);
+
+       if (filmeEncontrado != null && filmeEncontrado.getIdFilme() != 0) {
+        return filmeEncontrado;
+       }
+
+       return criarObjetoVazio();
+    }
+
+    @Override
+    protected Filme converterLinha(String[] partes) {
+        int id = Integer.parseInt(partes[0]);
+        String titulo = partes[1];
+        int classificacao = Integer.parseInt(partes[2]);
+        int idGenero = Integer.parseInt(partes[3]);
+        String status = partes[4];
+
+        Genero genero = new Genero().consultarGenero(idGenero, null);
+        Filme filme = new Filme(id, titulo, classificacao, genero);
+        filme.status = status;
+
+        return filme;
+    }
+
+    @Override
+    protected Filme criarObjetoVazio() {
+        return new Filme();
+    }
 }
