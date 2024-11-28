@@ -5,9 +5,9 @@ public class Genero extends Base<Genero> {
     private String descricao;
     private String status;
 
-    public Genero(int id, String descricao) {
+    public Genero(String descricao) {
         super("genero.txt");
-        this.id = id;
+        this.id = getProximoId();
         this.descricao = descricao;
         this.status = "Ativo";
     }
@@ -37,7 +37,7 @@ public class Genero extends Base<Genero> {
     }
 
     public boolean salvar() {
-        Genero existente = consultar(this.id, this.descricao);
+        Genero existente = consultar(this.descricao);
         if(existente.getId() != 0) {
             System.out.println("Erro: Id ou descrição já existem");
             return false;
@@ -55,10 +55,10 @@ public class Genero extends Base<Genero> {
         return editar(idProcurado, novaDescricao);
     }
 
-    public Genero consultarGenero(int idProcurado, String descricaoProcurada) {
-        Genero generoEncontrado = consultar(idProcurado, descricaoProcurada);
+    public Genero consultarGenero(String descricaoProcurada) {
+        Genero generoEncontrado = consultar(descricaoProcurada);
 
-        if(generoEncontrado != null && generoEncontrado.getId() != 0) {
+        if(generoEncontrado != null) {
             return generoEncontrado;
         }
 
@@ -67,10 +67,9 @@ public class Genero extends Base<Genero> {
 
     @Override
     protected Genero converterLinha(String[] partes) {
-        int id = Integer.parseInt(partes[0]);
         String descricao =  partes[1];
         String status = partes[2];
-        Genero genero = new Genero(id, descricao);
+        Genero genero = new Genero(descricao);
         genero.status = status;
 
         return genero;

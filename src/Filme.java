@@ -7,9 +7,9 @@ public class Filme extends Base<Filme> {
     private Genero genero;
     private String status;
 
-    public Filme(int idFilme, String titulo, int classificacao, Genero genero) {
+    public Filme(String titulo, int classificacao, Genero genero) {
         super("filme.txt");
-        this.idFilme = idFilme;
+        this.idFilme = getProximoId();
         this.titulo = titulo;
         this.classificacao = classificacao;
         this.genero = genero;
@@ -57,7 +57,9 @@ public class Filme extends Base<Filme> {
     }
 
     public boolean salvar() {
-        String linha = this.idFilme + ";" + this.titulo + ";" + this.classificacao + ";" + genero.getId() + ";" + this.status;
+
+        String linha = this.idFilme + ";" + this.titulo + ";" + this.classificacao + ";" + this.genero.getId() + ";"
+                + this.status;
         return cadastrar(linha);
     }
 
@@ -69,29 +71,42 @@ public class Filme extends Base<Filme> {
         return editar(idProcurado, novoTitulo);
     }
 
-    public Filme consultarFilme(int idProcurado, String tituloProcurado) {
-       Filme filmeEncontrado = consultar(idProcurado, tituloProcurado);
+    public Filme consultarFilme(String tituloProcurado) {
+        Filme filmeEncontrado = consultar(tituloProcurado);
 
-       if (filmeEncontrado != null && filmeEncontrado.getIdFilme() != 0) {
-        return filmeEncontrado;
-       }
+        if (filmeEncontrado != null) {
+            return filmeEncontrado;
+        }
 
-       return criarObjetoVazio();
+        return criarObjetoVazio();
     }
 
     @Override
     protected Filme converterLinha(String[] partes) {
-        int id = Integer.parseInt(partes[0]);
-        String titulo = partes[1];
-        int classificacao = Integer.parseInt(partes[2]);
-        int idGenero = Integer.parseInt(partes[3]);
-        String status = partes[4];
+        
+            if(partes.length != 5) {
+                System.out.println("Linha mal formatada ignorada: " + String.join(";", partes));
+                return criarObjetoVazio();
+            }
 
-        Genero genero = new Genero().consultarGenero(idGenero, null);
-        Filme filme = new Filme(id, titulo, classificacao, genero);
-        filme.status = status;
+            int id = Integer.parseInt(partes[0]);
+            String titulo = partes[1];
+            int classificacao = Integer.parseInt(partes[2]);
+            String descricaoGenero = partes[3];
+            String status = partes[4];
 
-        return filme;
+            Genero genero = new Genero().consultarGenero(descricaoGenero);
+
+            if(genero.getId() == 0) {
+                System.out.println("Gênero não encontrado: " + descricaoGenero);
+                return criarObjetoVazio();
+            }
+
+            Filme filme = new Filme(titulo, classificacao, genero);
+            filme.setIdFilme(id);
+            filme.status = status;
+            return filme;
+       
     }
 
     @Override

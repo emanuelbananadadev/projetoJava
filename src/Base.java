@@ -12,6 +12,12 @@ public abstract class Base<T> {
         this.filePath = "./src/bd/" + fileName;
     }
 
+    public int getProximoId() {
+        ArrayList<String[]> registros = listar();
+
+        return registros.size() + 1;
+    }
+
     public boolean cadastrar(String linha) {
         try {
             FileWriter fw = new FileWriter(filePath, true);
@@ -38,15 +44,10 @@ public abstract class Base<T> {
             String linha;
             while((linha = br.readLine()) != null) {
                 String[] partes = linha.split(";");
-                if (partes.length == 3) {
-                    dados.add(partes);
-                } else {
-                    System.out.println("Linha mal formatada ignorada: " + linha);
-                }
-            }
-
+                dados.add(partes);
+                } 
             br.close();
-        } catch (IOException e) {
+            } catch (IOException e) {
             System.out.println("Erro ao listar: " + e.getMessage());
         }
 
@@ -89,17 +90,17 @@ public abstract class Base<T> {
 
     }
 
-    public T consultar(int idProcurado, String descricaoProcurada) {
+    public T consultar(String descricaoProcurada) {
             ArrayList<String[]> registros = listar();
 
             for(String[] registro : registros) {
-                int idAtual = Integer.parseInt(registro[0]);
                 String descricaoAtual = registro[1];
 
-                if(idAtual == idProcurado && descricaoAtual.equals(descricaoProcurada)) {
+                if(descricaoAtual.equalsIgnoreCase(descricaoProcurada)) {
                     return converterLinha(registro);
                 }
             }
+            System.out.println("Descrição não encontrada: " + descricaoProcurada);
             return criarObjetoVazio();
         } 
 
