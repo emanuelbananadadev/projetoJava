@@ -58,6 +58,12 @@ public class Filme extends Base<Filme> {
 
     public boolean salvar() {
 
+        Filme existente = consultarFilme(this.titulo);
+        if(existente.getIdFilme() != 0) {
+            System.out.println("Erro: Id ou descrição já existem");
+            return false;
+        }
+
         String linha = this.idFilme + ";" + this.titulo + ";" + this.classificacao + ";" + this.genero.getId() + ";"
                 + this.status;
         return cadastrar(linha);
