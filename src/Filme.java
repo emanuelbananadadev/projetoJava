@@ -11,7 +11,12 @@ public class Filme extends Base<Filme> {
         super("filme.txt");
         this.idFilme = getProximoId();
         this.titulo = titulo;
-        this.classificacao = classificacao;
+        try {
+            this.classificacao = classificacao;
+        } catch (NumberFormatException e) {
+            System.out.println("A classificação deve ser um número inteiro");
+            this.classificacao = 0;
+        }
         this.genero = genero;
         this.status = "Ativo";
     }
@@ -64,13 +69,13 @@ public class Filme extends Base<Filme> {
             return false;
         }
 
-        String linha = this.idFilme + ";" + this.titulo + ";" + this.classificacao + ";" + this.genero.getId() + ";"
+        String linha = this.idFilme + ";" + this.titulo + ";" + this.classificacao + ";" + this.genero.getDescricao() + ";"
                 + this.status;
         return cadastrar(linha);
     }
 
     public ArrayList<String[]> listarFilmes() {
-        return listar();
+       return listar();
     }
 
     public boolean editarFilme(int idProcurado, String novoTitulo) {
@@ -118,5 +123,9 @@ public class Filme extends Base<Filme> {
     @Override
     protected Filme criarObjetoVazio() {
         return new Filme();
+    }
+
+    public String toString() {
+        return this.idFilme + this.titulo + this.genero.getDescricao();
     }
 }

@@ -1,12 +1,24 @@
-import java.sql.Date;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 public class Funcionario extends Pessoa {
     private int matricula;
-    private Date horarioTrabalho;
+    private LocalDateTime horarioTrabalho;
+    private FuncionarioBase base;
 
-    public Funcionario(String cpf, String nome, String email, Date horario) {
+    public Funcionario(String cpf, String nome, String email) {
+        
         super(cpf, nome, email);
-        this.horarioTrabalho = horario;
+        this.base = new FuncionarioBase();
+        this.matricula = base.getProximoId();
+        this.horarioTrabalho = LocalDateTime.now();
+
+        
+    }
+
+    public Funcionario() {
+        super("","","");
+        this.base = new FuncionarioBase();
     }
 
     public int getMatricula() {
@@ -17,11 +29,33 @@ public class Funcionario extends Pessoa {
         this.matricula = matricula;
     }
 
-    public Date getHorarioTrabalho() {
+    public LocalDateTime getHorarioTrabalho() {
         return this.horarioTrabalho;
     }
 
-    public void setHorarioTrabalho(Date horario) {
+    public void setHorarioTrabalho(LocalDateTime horario) {
         this.horarioTrabalho = horario;
+    }
+
+    public boolean salvar() {
+        String linha = this.matricula + ";" + this.getCpf() + ";" + this.getNome() + ";" + this.getEmail() + ";" + this.horarioTrabalho;
+        return base.cadastrar(linha);
+    }
+
+    public ArrayList<String[]> listarFuncionarios() {
+        return base.listar();
+    }
+
+    public Funcionario consultarFuncionario(String nomeProcurado) {
+        Funcionario funcionarioEncontrado = base.consultar(nomeProcurado);
+        return funcionarioEncontrado != null ? funcionarioEncontrado : criarObjetoVazio();
+    }
+
+    public Funcionario criarObjetoVazio() {
+        return new Funcionario("", "", "");
+    }
+
+    public String toString() {
+        return this.getCpf() + this.getNome() + this.getEmail();
     }
 }

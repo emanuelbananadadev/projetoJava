@@ -18,6 +18,10 @@ public abstract class Base<T> {
         return registros.size() + 1;
     }
 
+    protected String formatarLinha(String... valores) {
+        return String.join(",", valores);
+    }
+
     public boolean cadastrar(String linha) {
         try {
             FileWriter fw = new FileWriter(filePath, true);

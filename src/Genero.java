@@ -48,7 +48,7 @@ public class Genero extends Base<Genero> {
     }
 
     public ArrayList<String[]> listarGeneros() {
-        return listar();
+      return listar();
     }
 
     public boolean editarGenero(int idProcurado, String novaDescricao) {
@@ -78,5 +78,9 @@ public class Genero extends Base<Genero> {
     @Override
     protected Genero criarObjetoVazio() {
         return new Genero();
+    }
+
+    public String toString() {
+        return this.id + this.descricao + this.status;
     }
 }
